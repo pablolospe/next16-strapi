@@ -20,7 +20,7 @@
     "subHeading": {
       "type": "text"
     },
-    "Link": {
+    "link": {
       "type": "component",
       "component": "component.link",
       "repeatable": false
