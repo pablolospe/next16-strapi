@@ -1,34 +1,42 @@
 'use server'
 
-type FormState = {
-  success: boolean;
-  message?: string;
-  strapiErrors: { message: string } | null;
-  zodErrors: any | null;
-  data: {
-    username: string;
-    password: string;
-    email: string;
-  };
-};
+import { type FormState, SignupFormSchema } from "@/validations/auth";
+import z from "zod";
+
 
 export async function registerUserAction(prevState: FormState, formData: FormData): Promise<FormState> {
     console.log('Hello for Register User action');
 
-    const username = formData.get('username') as string;
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    // For now, return the prevState or a new state
-    return {
-        success: false,
-        message: undefined,
-        strapiErrors: { message: 'Registration not implemented yet' },
-        zodErrors: null,
-        data: {
-            username: username || '',
-            email: email || '',
-            password: password || '',
-        },
+    const fields = {
+        username: formData.get('username') as string,
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
     };
+
+    const validatedFields = SignupFormSchema.safeParse(fields)
+
+    if (!validatedFields.success) {
+        const flattenedErrors = z.flattenError(validatedFields.error)
+
+        console.log('Validation errors:', flattenedErrors.fieldErrors);
+
+        return {
+            success: false,
+            message: 'Validation error',
+            strapiErrors: null,
+            zodErrors: flattenedErrors.fieldErrors,
+            data: fields,
+        }
+    }
+    console.log('Validation successfull');
+    console.log('fields:', fields);
+
+
+    return {
+        success: true,
+        message: 'Validation successfull',
+        strapiErrors: null,
+        zodErrors: null,
+        data: fields,
+    }
 }
