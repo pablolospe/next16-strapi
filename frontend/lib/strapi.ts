@@ -1,5 +1,6 @@
+import { cacheLife } from 'next/cache';
 import qs from 'qs';
-const BASE_URL = 'http://localhost:1337';
+export const STRAPI_BASE_URL = 'http://localhost:1337';
 
 const QUERY_HOME_PAGE = {
   populate: {
@@ -17,21 +18,25 @@ const QUERY_HOME_PAGE = {
 }
 
 export async function getHomePage() {
-    const query = qs.stringify(QUERY_HOME_PAGE);
-    const response = await getStrapiData(`/api/home-page?${query}`)
-    return response?.data;
+  'use cache';
+
+  // cacheLife({ expire: 60 }); // cache for 60 seconds
+
+  const query = qs.stringify(QUERY_HOME_PAGE);
+  const response = await getStrapiData(`/api/home-page?${query}`)
+  return response?.data;
 }
 
 export async function getStrapiData<T>(url: string) {
-    try {
-        const response = await fetch(`${BASE_URL}${url}`);
-        if (!response.ok) {
-            // throw new Error(`Error fetching data from Strapi: ${response.status}`);
-        }
-        const data = await response.json();
-        return data;       
-    } catch (error) {
-        console.error(error);
-        throw null;
+  try {
+    const response = await fetch(`${STRAPI_BASE_URL}${url}`);
+    if (!response.ok) {
+      // throw new Error(`Error fetching data from Strapi: ${response.status}`);
     }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw null;
+  }
 }
