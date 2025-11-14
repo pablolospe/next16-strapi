@@ -17,7 +17,7 @@ export async function proxy(request: NextRequest) {
 
   // la ruta, es una ruta protegida, por lo que debemos verificar si el usuario está autenticado
   try {
-    // 1. validat si el usuario tiene el token jwt
+    // 1. validar si el usuario tiene el token jwt
     // 2. si el usuario existe en la base de datos
     // 3. si el usuario esta activo (Bloqueado?)
 
