@@ -10,7 +10,7 @@ const cookieConfig = {
     maxAge: 60 * 60 * 24 * 7,
     path: '/',
     httpOnly: true,
-    domain: process.env.HOST ?? 'localhost',
+    domain: process.env.STRAPI_BASE_URL ?? 'localhost',
     secure: process.env.NODE_ENV === 'production',
 }
 
