@@ -40,3 +40,45 @@ export async function getStrapiData<T>(url: string) {
     throw null;
   }
 }
+
+export async function registerUserService(userData: object){
+  const url = `${STRAPI_BASE_URL}/api/auth/local/register`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    })
+
+    const data = await response.json();
+    console.log(data);
+    return data; 
+  } catch (error) {
+    console.error('Error registering user:', error);
+    throw error;
+  }
+}
+
+export async function loginUserService(userData: object){
+  const url = `${STRAPI_BASE_URL}/api/auth/local`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    })
+
+    const data = await response.json();
+    console.log(data);
+    return data; 
+  } catch (error) {
+    console.error('Error login user:', error);
+    throw error;
+  }
+}

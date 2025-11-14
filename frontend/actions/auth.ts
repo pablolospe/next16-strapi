@@ -1,5 +1,6 @@
 'use server'
 
+import { registerUserService } from "@/lib/strapi";
 import { type FormState, SignupFormSchema } from "@/validations/auth";
 import z from "zod";
 
@@ -20,7 +21,7 @@ export async function registerUserAction(prevState: FormState, formData: FormDat
 
         console.log('Validation errors:', flattenedErrors.fieldErrors);
 
-        return {
+        return { 
             success: false,
             message: 'Validation error',
             strapiErrors: null,
@@ -28,8 +29,18 @@ export async function registerUserAction(prevState: FormState, formData: FormDat
             data: fields,
         }
     }
-    console.log('Validation successfull');
-    console.log('fields:', fields);
+    
+    const response = await registerUserService(validatedFields.data);
+
+    if(!response || response.error){
+     return { 
+            success: false,
+            message: 'Registration error',
+            strapiErrors: response?.error,
+            zodErrors: null,
+            data: fields,
+        }
+    }
 
 
     return {
