@@ -97,7 +97,7 @@ export function SignupForm() {
           <CardFooter className={styles.footer}>
             <Button className={styles.button}>Sign Up</Button>
             {formState.strapiErrors &&
-              <p className="text-pink-500 text-xs italic mt-1 py-2">{formState.strapiErrors.message}</p>
+              <p className="text-red-500 text-xs italic mt-1 py-2">{formState.strapiErrors.message}</p>
             }
           </CardFooter>
         </Card>

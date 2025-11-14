@@ -1,8 +1,18 @@
 'use server'
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { registerUserService } from "@/lib/strapi";
 import { type FormState, SignupFormSchema } from "@/validations/auth";
-import z from "zod";
+import { z } from "zod";
+
+const cookieConfig = {
+    maxAge: 60 * 60 * 24 * 7,
+    path: '/',
+    httpOnly: true,
+    domain: process.env.HOST ?? 'localhost',
+    secure: process.env.NODE_ENV === 'production',
+}
 
 
 export async function registerUserAction(prevState: FormState, formData: FormData): Promise<FormState> {
@@ -21,7 +31,7 @@ export async function registerUserAction(prevState: FormState, formData: FormDat
 
         console.log('Validation errors:', flattenedErrors.fieldErrors);
 
-        return { 
+        return {
             success: false,
             message: 'Validation error',
             strapiErrors: null,
@@ -29,11 +39,11 @@ export async function registerUserAction(prevState: FormState, formData: FormDat
             data: fields,
         }
     }
-    
+
     const response = await registerUserService(validatedFields.data);
 
-    if(!response || response.error){
-     return { 
+    if (!response || response.error) {
+        return {
             success: false,
             message: 'Registration error',
             strapiErrors: response?.error,
@@ -43,11 +53,7 @@ export async function registerUserAction(prevState: FormState, formData: FormDat
     }
 
 
-    return {
-        success: true,
-        message: 'Validation successfull',
-        strapiErrors: null,
-        zodErrors: null,
-        data: fields,
-    }
+    const cookieStore = await cookies();
+    cookieStore.set('jwt', response.jwt, cookieConfig)
+    redirect('/dashboard');
 }
